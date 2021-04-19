@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
@@ -46,7 +47,7 @@ namespace Moldes.CertRequest.IosCertRequest
             ms.Close();
             return ret;
 
-        }
+        }                                                    
 
         public static RSA GenerateKeyPair(int keySize)
         {
@@ -55,10 +56,16 @@ namespace Moldes.CertRequest.IosCertRequest
             return rsa;
         }
 
-        public static byte[] GeneratePkcs10(RSA rsa, X500DistinguishedName subject)
+        public static byte[] GeneratePkcs10(RSA rsa, X509Name subject)
         {
-            CertificateRequest pkcs10 = new CertificateRequest(subject, rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
-            return pkcs10.CreateSigningRequest(X509SignatureGenerator.CreateForRSA(rsa, signaturePadding: RSASignaturePadding.Pkcs1));
+            // CertificateRequest pkcs10 = new CertificateRequest(subject, rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
+            //return pkcs10.CreateSigningRequest(X509SignatureGenerator.CreateForRSA(rsa, signaturePadding: RSASignaturePadding.Pkcs1));
+
+            AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetRsaKeyPair(rsa);
+            
+            Pkcs10CertificationRequest csr = new Pkcs10CertificationRequest("SHA1WITHRSA", subject, keyPair.Public, null, keyPair.Private);
+            
+            return csr.GetDerEncoded();
         }
 
     }
