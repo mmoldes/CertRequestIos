@@ -8,6 +8,15 @@ using Org.BouncyCastle.Security;
 
 namespace Moldes.CertRequest.IosCertRequest
 {
+    /// <summary>
+    /// The main Certificate Request class. Contains all methods for performing the generation of a digital certificate for the user.
+    /// </summary>
+    /// <list type="bullet">
+    /// <term>Key Pair</term>
+    /// <description>Generate a private and public key using RSA algorithm </description>
+    /// <item>Generate Pkcs10</item>
+    /// <description>Generate a Certificate Signing Request </description>
+    /// </list>
     public class CryptoUtilities
     {
         public static byte[] GeneratePkcs12(X509Certificate2 cert, RSA rsa, String password, String alias)
@@ -62,9 +71,7 @@ namespace Moldes.CertRequest.IosCertRequest
             //return pkcs10.CreateSigningRequest(X509SignatureGenerator.CreateForRSA(rsa, signaturePadding: RSASignaturePadding.Pkcs1));
 
             AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetRsaKeyPair(rsa);
-            
             Pkcs10CertificationRequest csr = new Pkcs10CertificationRequest("SHA1WITHRSA", subject, keyPair.Public, null, keyPair.Private);
-            
             return csr.GetDerEncoded();
         }
 

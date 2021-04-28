@@ -3,6 +3,7 @@ using System;
 using NUnit.Framework;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace CertRequestIosTest
 {
@@ -20,7 +21,7 @@ namespace CertRequestIosTest
         public void TestGeneratePkcs10()
         {
             RSA rsa = CryptoUtilities.GenerateKeyPair(2048);
-            byte[] p10 = CryptoUtilities.GeneratePkcs10(rsa, new X500DistinguishedName("cn=Maria"));
+            byte[] p10 = CryptoUtilities.GeneratePkcs10(rsa, new X509Name("cn=Maria"));
             Console.WriteLine(System.Convert.ToBase64String(p10));
         }
 
