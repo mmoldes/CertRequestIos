@@ -5,6 +5,12 @@ using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
+using EmbedIO;
+using System.Threading;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
+using WebKit;
+using Foundation;
 
 namespace Moldes.CertRequest.IosCertRequest
 {
@@ -73,6 +79,38 @@ namespace Moldes.CertRequest.IosCertRequest
             AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetRsaKeyPair(rsa);
             Pkcs10CertificationRequest csr = new Pkcs10CertificationRequest("SHA1WITHRSA", subject, keyPair.Public, null, keyPair.Private);
             return csr.GetDerEncoded();
+        }
+
+        public static void  Server()
+        {
+            var url = "http://localhost:9696/";
+
+     
+            // Create Webserver and attach LocalSession and Static
+            // files module and CORS enabled
+            WebServer server = new WebServer(o => o
+            .WithUrlPrefix(url)
+            .WithMode(HttpListenerMode.EmbedIO))
+            .WithLocalSessionManager()
+            .WithAction("/test", HttpVerbs.Any, ctx =>
+            {
+               Console.WriteLine("Request received");
+                return ctx.SendDataAsync(new { mensaje = "Hola Mundo!" });
+            }
+            
+             );
+
+              var cts = new CancellationTokenSource();
+            var task = server.RunAsync(cts.Token);
+
+            Console.ReadKey(true);
+            cts.Cancel();
+
+            // Wait before dispose server
+            task.Wait();
+            server.Dispose();
+            // WebServer webServer = new EmbedIO.WebServer("http://*:9696");
+
         }
 
     }

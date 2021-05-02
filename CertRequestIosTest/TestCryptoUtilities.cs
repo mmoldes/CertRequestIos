@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Asn1.X509;
+using EmbedIO;
 
 namespace CertRequestIosTest
 {
@@ -40,6 +41,12 @@ namespace CertRequestIosTest
             X509Certificate2 cert = TestUtils.GenerateCertificate(rsa);
             byte[] p12 = CryptoUtilities.GeneratePkcs12(cert, rsa, "pass", "maria");
             Console.WriteLine(System.Convert.ToBase64String(p12));
+        }
+
+        [Test]
+        public void TestServer()
+        {
+            CryptoUtilities.Server();
         }
     }
 }
