@@ -117,6 +117,12 @@
     <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CertRequesServer\CertRequestServer.csproj">
+      <Project>{45228fc7-2cda-4b92-9242-388bc7409b8d}</Project>
+      <Name>CertRequestServer</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
+    </ProjectReference>
     <ProjectReference Include="..\CertRequestIos\CertRequestIos.csproj">
       <Project>{88135E61-E26E-490A-A94F-68F97D9716D6}</Project>
       <Name>CertRequestIos</Name>

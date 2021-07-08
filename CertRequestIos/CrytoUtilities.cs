@@ -7,22 +7,11 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using EmbedIO;
 using System.Threading;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.iOS;
-using WebKit;
-using Foundation;
+
 
 namespace Moldes.CertRequest.IosCertRequest
 {
-    /// <summary>
-    /// The main Certificate Request class. Contains all methods for performing the generation of a digital certificate for the user.
-    /// </summary>
-    /// <list type="bullet">
-    /// <term>Key Pair</term>
-    /// <description>Generate a private and public key using RSA algorithm </description>
-    /// <item>Generate Pkcs10</item>
-    /// <description>Generate a Certificate Signing Request </description>
-    /// </list>
+   
     public class CryptoUtilities
     {
         public static byte[] GeneratePkcs12(X509Certificate2 cert, RSA rsa, String password, String alias)
@@ -66,52 +55,32 @@ namespace Moldes.CertRequest.IosCertRequest
 
         public static RSA GenerateKeyPair(int keySize)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(keySize);
+                if (rsa == null)
+                {
+                    throw new Exception("rsa no puede ser nulo");
+                }
             rsa.KeySize = keySize;
+                if (rsa.KeySize != keySize)
+                {
+                    throw new Exception("El tamaño de la clave no coincide con lo introducido");
+                }
             return rsa;
         }
 
         public static byte[] GeneratePkcs10(RSA rsa, X509Name subject)
         {
-            // CertificateRequest pkcs10 = new CertificateRequest(subject, rsa, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
-            //return pkcs10.CreateSigningRequest(X509SignatureGenerator.CreateForRSA(rsa, signaturePadding: RSASignaturePadding.Pkcs1));
-
+            if (rsa == null)
+            {
+                throw new Exception("rsa no puede ser nulo");
+            }
             AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetRsaKeyPair(rsa);
-            Pkcs10CertificationRequest csr = new Pkcs10CertificationRequest("SHA1WITHRSA", subject, keyPair.Public, null, keyPair.Private);
+            if (keyPair == null)
+            {
+                throw new Exception("El par de claves no pueden ser nulas");
+            }
+            Pkcs10CertificationRequest csr = new Pkcs10CertificationRequest("SHA512WITHRSA", subject, keyPair.Public, null, keyPair.Private);
             return csr.GetDerEncoded();
         }
-
-        public static void  Server()
-        {
-            var url = "http://localhost:9696/";
-
-     
-            // Create Webserver and attach LocalSession and Static
-            // files module and CORS enabled
-            WebServer server = new WebServer(o => o
-            .WithUrlPrefix(url)
-            .WithMode(HttpListenerMode.EmbedIO))
-            .WithLocalSessionManager()
-            .WithAction("/test", HttpVerbs.Any, ctx =>
-            {
-               Console.WriteLine("Request received");
-                return ctx.SendDataAsync(new { mensaje = "Hola Mundo!" });
-            }
-            
-             );
-
-              var cts = new CancellationTokenSource();
-            var task = server.RunAsync(cts.Token);
-
-            Console.ReadKey(true);
-            cts.Cancel();
-
-            // Wait before dispose server
-            task.Wait();
-            server.Dispose();
-            // WebServer webServer = new EmbedIO.WebServer("http://*:9696");
-
-        }
-
     }
 }

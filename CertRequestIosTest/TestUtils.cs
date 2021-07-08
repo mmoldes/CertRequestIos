@@ -26,8 +26,8 @@ namespace CertRequestIosTest
             var serialNumber = BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(Int64.MaxValue), random);
             certificateGenerator.SetSerialNumber(serialNumber);
 
-            certificateGenerator.SetIssuerDN(new X509Name($"C=NL, O=SomeCompany, CN=Maria"));
-            certificateGenerator.SetSubjectDN(new X509Name($"C=NL, O=SomeCompany, CN=Maria"));
+            certificateGenerator.SetIssuerDN(new X509Name($"C=ES, O=UPM, CN=Maria"));
+            certificateGenerator.SetSubjectDN(new X509Name($"C=ES, O=UPM, CN=Maria"));
             certificateGenerator.SetNotBefore(DateTime.UtcNow.Date);
             certificateGenerator.SetNotAfter(DateTime.UtcNow.Date.AddYears(1));
 

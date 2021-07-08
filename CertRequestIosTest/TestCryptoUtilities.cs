@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Asn1.X509;
 using EmbedIO;
+using CertRequestServer;
 
 namespace CertRequestIosTest
 {
@@ -46,7 +47,7 @@ namespace CertRequestIosTest
         [Test]
         public void TestServer()
         {
-            CryptoUtilities.Server();
+            Server.EmbedioServer(new byte[] { 0x00, 0x00, 0x00, 0x00 });
         }
     }
 }
