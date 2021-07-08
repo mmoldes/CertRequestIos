@@ -30,15 +30,15 @@ namespace CertRequestIosTest
             certificateGenerator.SetSubjectDN(new X509Name($"C=ES, O=UPM, CN=Maria"));
             certificateGenerator.SetNotBefore(DateTime.UtcNow.Date);
             certificateGenerator.SetNotAfter(DateTime.UtcNow.Date.AddYears(1));
-
-
+            
+            
             AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetRsaKeyPair(rsa);
             certificateGenerator.SetPublicKey(
                 keyPair.Public
             );
 
             const string signatureAlgorithm = "SHA256WithRSA";
-            var signatureFactory = new Asn1SignatureFactory(
+            ISignatureFactory signatureFactory = new Asn1SignatureFactory(
                 signatureAlgorithm,
                 keyPair.Private
             );

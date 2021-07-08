@@ -53,9 +53,12 @@ namespace CertRequestServer
               + "</dict>\r\n"
               + "</plist>"
           ;
+        
+        //Método que crea un servidor EmbedIO em el cual publicaremos un p12
         public static void EmbedioServer(byte[] p12)
         {
 
+            //Sustituimos los tres parámetros en el perfil de configuración.
             String b64P12 = Convert.ToBase64String(p12);
             String uuid1 = Guid.NewGuid().ToString();
             String uuid2 = Guid.NewGuid().ToString();
@@ -66,21 +69,24 @@ namespace CertRequestServer
                 .Replace("$UUID$2", uuid2)
                 ;
 
+            //Instanciamos un servidor
             WebServer server = new WebServer(o => o
                 .WithUrlPrefix("http://localhost:9696/")
                 .WithMode(HttpListenerMode.EmbedIO))
                 .WithLocalSessionManager()
+                //Establecemos la relación entre la extensión del archivo y su mimetype
                 .WithCustomMimeType(".mobileconfig", "application/x-apple-aspen-config")
                 .WithAction("/certificado.mobileconfig", HttpVerbs.Get, ctx =>
                 {
                     return ctx.SendStringAsync(
                         xmlProfile,
                         "application/x-apple-aspen-config",
-                        System.Text.Encoding.UTF8
+                        System.Text.Encoding.UTF8   
                     );
+                    
                 }
             );
-
+            //Iniciamos el servidor
             var cts = new CancellationTokenSource();
             var task = server.RunAsync(cts.Token);
 
@@ -89,11 +95,6 @@ namespace CertRequestServer
             {
                 Thread.Sleep(50000);
             }
-
-            cts.Cancel();
-            task.Wait();
-            server.Dispose();
-
         }
     }
 }
